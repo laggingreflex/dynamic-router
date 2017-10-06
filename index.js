@@ -9,17 +9,21 @@ module.exports = (lib) => {
     render() {
       const router = this.props.router;
       if (!router) throw new Error('Need a router');
-      return h(router, {
-        path: this.state.path,
-        link: (path, text) => h('a', {
-          href: path,
-          onclick: (e) => {
-            e.preventDefault();
-            window.history.pushState(null, null, path);
-            this.setState({ path })
-          }
-        }, [text])
-      })
+      const routerProps = {};
+      routerProps.path = this.state.path || window.location.pathname;
+      routerProps.link = (path, text) => h('a', {
+        href: path,
+        onclick: (e) => {
+          e.preventDefault();
+          window.history.pushState(null, null, path);
+          this.setState({ path });
+        }
+      }, [text]);
+      routerProps.route = path => {
+        window.history.pushState(null, null, path);
+        this.setState({ path });
+      };
+      return h(router, Object.assign({}, this.props, { router: routerProps }))
     }
   }
 }

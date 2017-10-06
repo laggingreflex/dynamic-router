@@ -25,29 +25,34 @@ import Router from 'dynamic-router/react';
 <Router router={router}></Router>
 ```
 
-* **`router`** `[component]` A component class that takes `path` and `link` as props using which you can render your desired component.
+* **`router`** `[component]` A component class whose `props` include a **`router`** with  routing related properties/methods using which you can route/render your desired component.
 
   ```js
-  ({path, link}) => <...>
+  ( props ) => { props.router.<…> }
   ```
 
   * **`path`** `[string]` Current path
   * **`link`** `[function]` Function to make links (instead of using `<a href>`)
 
     ```js
-    link(href, text)
+    router.link(href, text)
     ```
 
+  * **`route`** `[function]` Function to immediately route to the specified path
+    ```js
+    router.route(path)
+    ```
 
+**Note** `props` will also include any other properties passed to the `Router` class, so as to pass them down to the `router` component (filled with the special `router` prop described above)
 
 ### Example
 
-```js
+```jsx
 import React from 'react';
 import Router from 'dynamic-router/react';
 
 const router = props => {
-  const {path, link} = props;
+  const {path, link, route} = props.router;
 
   // Route by if/else
   if (path === '/') {
@@ -72,23 +77,18 @@ const router = props => {
       return <div> Bar </div>
   }
 
-  // Nested routes
-  if (path === '/') {
-    return <div> Home </div>
-  } else if (path.match('^/foo')) {
-    // begins with /foo
-    // could be /foo, /foo/bar
-    return (
-      <div path={path}> // pass the path down
-        // handle in nested component(s)
-        {if (path.match('/foo/bar')) {
-          return <div> Foo Bar </div>
-        } else if (path.match('/foo/baz')) {
-          return <div> Foo Baz </div>
-        }}
-      </div>
-    )
+  // Route by matching, and handling nested routes:
+  if (path.match('^/foo')) { // begins with /foo
+    return <FooNested router={props.router}> // pass down the router prop
   }
+}
+
+const FooNested = props => {
+  const {path, link, route} = props.router;
+  return {
+    '/foo/bar': <div> Foo Bar </div>,
+    '/foo/baz': <div> Foo Baz </div>,
+  }[path];
 }
 
 const App = <Router router={router}></Router>
