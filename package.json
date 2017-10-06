@@ -1,6 +1,6 @@
 {
   "name": "dynamic-router",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Route any path dynamically in react/preact",
   "main": "index.js",
   "repository": "laggingreflex/dynamic-router"
