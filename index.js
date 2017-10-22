@@ -19,10 +19,10 @@ module.exports = (lib) => {
           this.setState({ path });
         }
       }, [text]);
-      routerProps.route = path => {
+      routerProps.route = path => setTimeout(() => {
         window.history.pushState(null, null, path);
         this.setState({ path });
-      };
+      });
       return h(router, Object.assign({}, this.props, { router: routerProps }))
     }
   }
