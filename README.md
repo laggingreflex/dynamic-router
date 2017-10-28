@@ -4,7 +4,6 @@ Route any path dynamically in react/preact. Handle nested and relatives paths wi
 
 In contrast to existing router solution which require you **declare** your routes, this gives you ***dynamic*** control over "path" property for all routing needs.
 
-
 ## Install
 
 ```sh
@@ -12,7 +11,6 @@ npm i dynamic-router
 ```
 
 ## Usage
-
 
 ### API
 
@@ -22,7 +20,7 @@ npm i dynamic-router
 import Router from 'dynamic-router/react';
 // After that both work the same way
 
-<Router router={router}></Router>
+<Router router={router} [...options]></Router>
 ```
 
 * **`router`** `[component]` A component class whose `props` include a **`router`** with  routing related properties/methods using which you can route/render your desired component.
@@ -42,6 +40,10 @@ import Router from 'dynamic-router/react';
     ```js
     router.route(path)
     ```
+
+Options:
+
+* **`publicPath`** `[string]` Base path appended to all routes.
 
 **Note** `props` will also include any other properties passed to the `Router` class, so as to pass them down to the `router` component (filled with the special `router` prop described above)
 
@@ -93,3 +95,13 @@ const FooNested = props => {
 
 const App = <Router router={router}></Router>
 ```
+
+## Differences to (p)react-router
+
+* All operations (link, route, etc.) are done via top level `router` prop. So you need to pass it down to nested components if they need it.
+
+* Must use the provided `router.link` to create an `<a>` link for the path to be handled by router when user clicks it.
+
+* Must use the provided `router.route` to change the path.
+
+
