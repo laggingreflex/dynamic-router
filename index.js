@@ -10,10 +10,16 @@ module.exports = (lib) => {
       }
     }
 
-    updatePath(path = window.location.pathname) {
+    handlePublicPath(path) {
       if (this.publicPathRegexp && !this.publicPathRegexp.test(path)) {
-        path = this.props.publicPath + path;
+        return this.props.publicPath + path;
+      } else {
+        return path;
       }
+    }
+
+    updatePath(path = window.location.pathname) {
+      path = this.handlePublicPath(path);
       // TODO:? handle file:// protocol
       window.history.pushState(null, null, path);
       path = window.location.pathname;
@@ -28,13 +34,16 @@ module.exports = (lib) => {
       if (!router) throw new Error('Need a router');
       const routerProps = {};
       routerProps.path = this.state.path || window.location.pathname;
-      routerProps.link = (path, text) => h('a', {
-        href: path,
-        onclick: (e) => {
-          e.preventDefault();
-          this.updatePath(path);
-        }
-      }, [text]);
+      routerProps.link = (path, text) => {
+        path = this.handlePublicPath(path);
+        return h('a', {
+          href: path,
+          onclick: (e) => {
+            e.preventDefault();
+            this.updatePath(path);
+          }
+        }, [text])
+      };
       routerProps.route = path => setTimeout(() => {
         window.history.pushState(null, null, path);
         this.updatePath(path);
