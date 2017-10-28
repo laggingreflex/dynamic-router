@@ -14,6 +14,9 @@ module.exports = (lib) => {
       if (this.publicPathRegexp && !this.publicPathRegexp.test(path)) {
         path = this.props.publicPath + path;
       }
+      // TODO:? handle file:// protocol
+      window.history.pushState(null, null, path);
+      path = window.location.pathname;
       this.setState({ path });
     }
     componentDidMount() {
@@ -29,8 +32,6 @@ module.exports = (lib) => {
         href: path,
         onclick: (e) => {
           e.preventDefault();
-          // TODO: handle file:// protocol
-          window.history.pushState(null, null, path);
           this.updatePath(path);
         }
       }, [text]);
