@@ -98,10 +98,9 @@ const App = <Router router={router}></Router>
 
 ## Differences to (p)react-router
 
-* All operations (link, route, etc.) are done via top level `router` prop. So you need to pass it down to nested components if they need it.
+* All operations (link, route, etc.) are done via top level `router` prop. So you need to pass it down to nested components if they need it. I.e. you must:
 
-* Must use the provided `router.link` to create an `<a>` link for the path to be handled by router when user clicks it.
+  * Use the provided `router.link` to create an `<a>` link for the path to be handled by router when user clicks it.
 
-* Must use the provided `router.route` to change the path.
-
+  * Use the provided `router.route` to change the path.
 
