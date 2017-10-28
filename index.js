@@ -11,7 +11,7 @@ module.exports = (lib) => {
     }
 
     handlePublicPath(path) {
-      if (this.publicPathRegexp && !this.publicPathRegexp.test(path)) {
+      if (this.publicPathRegexp && !path.match(/^[.]/) && !this.publicPathRegexp.test(path)) {
         return this.props.publicPath + path;
       } else {
         return path;
@@ -42,13 +42,13 @@ module.exports = (lib) => {
             e.preventDefault();
             this.updatePath(path);
           }
-        }, [text])
+        }, [text]);
       };
       routerProps.route = path => setTimeout(() => {
         window.history.pushState(null, null, path);
         this.updatePath(path);
       });
-      return h(router, Object.assign({}, this.props, { router: routerProps }))
+      return h(router, Object.assign({}, this.props, { router: routerProps }));
     }
   }
 }
