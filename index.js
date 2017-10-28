@@ -4,12 +4,21 @@ module.exports = (lib) => {
 
   return class extends Component {
 
-    update(path = window.location.pathname) {
+    componentWillMount() {
+      if (this.props.publicPath && this.props.publicPath !== '/') {
+        this.publicPathRegexp = new RegExp('^' + this.props.publicPath);
+      }
+    }
+
+    updatePath(path = window.location.pathname) {
+      if (this.publicPathRegexp && !this.publicPathRegexp.test(path)) {
+        path = this.props.publicPath + path;
+      }
       this.setState({ path });
     }
     componentDidMount() {
       this.setState({ path: window.location.pathname });
-      window.addEventListener('popstate', () => this.update());
+      window.addEventListener('popstate', () => this.updatePath());
     }
     render() {
       const router = this.props.router;
@@ -20,13 +29,14 @@ module.exports = (lib) => {
         href: path,
         onclick: (e) => {
           e.preventDefault();
+          // TODO: handle file:// protocol
           window.history.pushState(null, null, path);
-          this.update(path);
+          this.updatePath(path);
         }
       }, [text]);
       routerProps.route = path => setTimeout(() => {
         window.history.pushState(null, null, path);
-        this.update(path);
+        this.updatePath(path);
       });
       return h(router, Object.assign({}, this.props, { router: routerProps }))
     }
