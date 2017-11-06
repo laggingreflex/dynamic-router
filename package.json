@@ -3,5 +3,13 @@
   "version": "0.5.1",
   "description": "Route any path dynamically in react/preact",
   "main": "index.js",
-  "repository": "laggingreflex/dynamic-router"
+  "repository": "laggingreflex/dynamic-router",
+  "peerDependencies": {
+    "preact": "*",
+    "react": "*"
+  },
+  "devDependencies": {
+    "preact": "*",
+    "react": "*"
+  }
 }
