@@ -45,7 +45,6 @@ module.exports = (lib) => {
         }, [text]);
       };
       routerProps.route = path => setTimeout(() => {
-        window.history.pushState(null, null, path);
         this.updatePath(path);
       });
       return h(router, Object.assign({}, this.props, { router: routerProps }));
