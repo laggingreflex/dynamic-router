@@ -1,5 +1,5 @@
 module.exports = (lib) => {
-  const h = lib.h || lib.createComponent;
+  const h = lib.h || lib.createElement;
   const Component = lib.Component;
 
   return class extends Component {
@@ -8,6 +8,8 @@ module.exports = (lib) => {
       if (this.props.publicPath && this.props.publicPath !== '/') {
         this.publicPathRegexp = new RegExp('^' + this.props.publicPath);
       }
+      this.setState({ path: window.location.pathname });
+      window.addEventListener('popstate', () => this.updatePath());
     }
 
     handlePublicPath(path) {
@@ -25,15 +27,12 @@ module.exports = (lib) => {
       path = window.location.pathname;
       this.setState({ path });
     }
-    componentDidMount() {
-      this.setState({ path: window.location.pathname });
-      window.addEventListener('popstate', () => this.updatePath());
-    }
+
     render() {
       const router = this.props.router;
       if (!router) throw new Error('Need a router');
       const routerProps = {};
-      routerProps.path = this.state.path || window.location.pathname;
+      routerProps.path = (this.state && this.state.path) || window.location.pathname;
       routerProps.link = (path, text) => {
         path = this.handlePublicPath(path);
         return h('a', {
