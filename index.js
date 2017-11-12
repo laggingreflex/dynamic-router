@@ -24,12 +24,14 @@ module.exports = (lib) => {
     }
 
     updatePath(path = window.location.pathname) {
+      const pathArg = path;
       if (this.detectTooManyRedirects(path)) return;
       path = this.handlePublicPath(path);
       // TODO:? handle file:// protocol
       window.history.pushState(null, null, path);
       path = window.location.pathname;
       this.setState({ path });
+      this.log(`${[...arguments]} -> ${path}`, this.state);
     }
 
     render() {
@@ -83,6 +85,11 @@ module.exports = (lib) => {
       } else {
         return 'Error: Too many redirects';
       }
+    }
+
+    log(...msg) {
+      if (!this.props.log) return;
+      console.log(...msg);
     }
 
   }
