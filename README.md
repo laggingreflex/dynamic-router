@@ -45,6 +45,11 @@ Options:
 
 * **`publicPath`** `[string]` Base path appended to all routes.
 
+
+* **`redirectLimit`** `[number=10]` Prevents going over this many route changes in a short amount of time.
+* **`redirectLimitTime`** `[number=1000]` Prevents a number of route changes in this threshold time in ms.
+* **`handleTooManyRedirects`** `[function]` Render function to handle when route changes cross the the threshold. Default: (Displays) `() => 'Error: Too many redirects'`
+
 **Note** `props` will also include any other properties passed to the `Router` class, so as to pass them down to the `router` component (filled with the special `router` prop described above)
 
 ### Example

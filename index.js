@@ -5,6 +5,9 @@ module.exports = (lib) => {
   return class extends Component {
 
     componentWillMount() {
+      this.previousPaths = [];
+      this.redirectLimit = this.props.redirectLimit || 10;
+      this.redirectLimitTime = this.props.redirectLimitTime || 1000;
       if (this.props.publicPath && this.props.publicPath !== '/') {
         this.publicPathRegexp = new RegExp('^' + this.props.publicPath);
       }
@@ -21,6 +24,7 @@ module.exports = (lib) => {
     }
 
     updatePath(path = window.location.pathname) {
+      if (this.detectTooManyRedirects(path)) return;
       path = this.handlePublicPath(path);
       // TODO:? handle file:// protocol
       window.history.pushState(null, null, path);
@@ -29,6 +33,10 @@ module.exports = (lib) => {
     }
 
     render() {
+      if (this.state.tooManyRedirects) {
+        console.error(`Error: Too many redirects: ${this.previousPaths.length} in ${this.tooManyRedirectsTimeDiff}ms`, this.previousPaths.map(_ => _.path));
+        return this.handleTooManyRedirects();
+      }
       const router = this.props.router;
       if (!router) throw new Error('Need a router');
       const routerProps = {};
@@ -48,5 +56,34 @@ module.exports = (lib) => {
       });
       return h(router, Object.assign({}, this.props, { router: routerProps }));
     }
+
+    detectTooManyRedirects(path) {
+      const currentPath = { path, time: new Date };
+      this.previousPaths.push(currentPath);
+      if (this.previousPaths.length > this.redirectLimit) {
+        const firstPath = this.previousPaths.shift();
+        this.tooManyRedirectsTimeDiff = Math.abs(Number(firstPath.time) - Number(currentPath.time));
+        // console.log(`this.timeDiff:`, this.tooManyRedirectsTimeDiff);
+        if (this.tooManyRedirectsTimeDiff < this.redirectLimitTime) {
+          this.tooManyRedirectsFlag = true;
+        }
+      }
+      clearTimeout(this.clearPreviousPaths);
+      this.clearPreviousPaths = setTimeout(() => {
+        this.clearPreviousPaths = [];
+        this.tooManyRedirectsFlag = false;
+      }, 1000);
+      this.setState({ tooManyRedirects: this.tooManyRedirectsFlag });
+      return this.tooManyRedirectsFlag;
+    }
+
+    handleTooManyRedirects() {
+      if (this.props.handleTooManyRedirects) {
+        return this.props.handleTooManyRedirects();
+      } else {
+        return 'Error: Too many redirects';
+      }
+    }
+
   }
 }
