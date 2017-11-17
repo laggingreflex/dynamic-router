@@ -1,6 +1,9 @@
 module.exports = (lib) => {
   const h = lib.h || lib.createElement;
   const Component = lib.Component;
+  if (!h || !Component) {
+    throw new Error("Library passed doesn't contain [h|createElement] or [Component]. You might be using `dynamic-router` directly, please use `dynamic-router/react` or `dynamic-router/preact`");
+  }
 
   return class extends Component {
 
